@@ -6,58 +6,109 @@
 #include "file_operations.h"
 
 int create_and_write_file(const char *filename, const char *content) {
-    // TODO: Declare an integer 'fd' for the file descriptor.
-    // TODO: Declare a variable 'bytes_written' of type ssize_t to store how many bytes are written.
+  int fd;
+  ssize_t bytes_written;
+  // 'fd' acts as the file descriptor while 'bytes_written' stores how many bytes 
 
-    // TODO: Print a message showing which file is being created.
-    // TODO: Print a message showing what content will be written.
+  printf("Creating file: %s \n", filename); // Prints a message showing which file is being created
+  
+  //printf(filename); -- Obsolete code
+  //printf("\n"); -- Obsolete code
+  
+  printf("Content to write: %s \n", content); // Print a message showing what content will be written.
+  
+  //printf(content); -- Obsolete code
+  //printf("\n"); -- Obsolete code
 
-    // TODO: Open or create the file for writing using the open() system call.
-    // TODO: Use flags O_CREAT | O_WRONLY | O_TRUNC and permissions 0644.
-    // TODO: Check if open() failed (fd == -1). If so, print an error using perror and return -1.
+  fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644); // Opens or creates the file for writing using the open() system call.
+  if (fd == -1) // If open() fails, prints an error and returns -1
+  {
+    perror("Error at open");
+    return -1;
+  }
 
-    // TODO: Print the file descriptor value.
+  printf("File descriptor: %d \n", fd); // Prints the file descriptor value.
+  
+  //printf("%d", fd); -- Obsolete code
+  //printf("\n"); -- Obsolete code
 
-    // TODO: Write the content to the file using the write() system call.
-    // TODO: Use the length of 'content' as the size to write.
-    // TODO: Check if write() failed (bytes_written == -1). If so, print an error using perror, close the file, and return -1.
+  bytes_written = write(fd, content, strlen(content)); // Writes the content to the file using the write() system call.
+  if (bytes_written == -1) // If write() fails, prints an error and returns -1
+  {
+    perror("Error at write");
+    close(fd);
+    return -1;
+  }
 
-    // TODO: Print a success message with the number of bytes written and the filename.
+  printf("Successfully wrote %zd bytes to '%s' \n", bytes_written, filename); // Prints a success message with the number of bytes written and filename.
+  
+  //printf("%zd", bytes_written); -- Obsolete code
+  //printf(" bytes to "); -- Obsolete code
+  //printf(filename); -- Obsolete code
+  //printf("\n"); -- Obsolete code
 
-    // TODO: Close the file using close(fd).
-    // TODO: Check if close() failed. If so, print an error using perror and return -1.
+  int close_success = close(fd); // Closes the file
+  if (close_success != 0) // If close() fails, prints an error and returns -1
+  {
+    perror("Error at close");
+    return -1;
+  }
 
-    // TODO: Print a message that the file was closed successfully.
-    return 0;
+  printf("File closed successfully \n"); // Prints if the file closes successfully.
+  return 0;
 }
 
 int read_file_contents(const char *filename) {
-    // TODO: Declare an integer 'fd' for the file descriptor.
-    // TODO: Create a buffer array of size 1024 to store the file data.
-    // TODO: Declare a variable 'bytes_read' of type ssize_t to store how many bytes are read.
+  int fd;
+  char buffer[1024];
+  ssize_t bytes_read;
+  // 'fd' acts as the file descriptor
+  // 'buffer' stores file data
+  // 'bytes_read' stores how many bytes 
 
-    // TODO: Print a message showing which file is being read.
+  printf("Reading file: %s \n", filename); // Prints a message showing which file is being read.
+  //printf(filename);
+  //printf("\n");
 
-    // TODO: Open the file for reading using the open() system call.
-    // TODO: Use the O_RDONLY flag.
-    // TODO: Check if open() failed (fd == -1). If so, print an error using perror and return -1.
+  fd = open(filename, O_RDONLY); // Opens the file for reading using the open() system call.
+  if (fd == -1) // If open() fails, prints an error and returns -1
+  {
+    perror("Error at open");
+    return -1;
+  }
 
-    // TODO: Print the file descriptor value.
-    // TODO: Print a header for the file contents.
+  printf("File descriptor: %d \n", fd); // Prints the file descriptor value.
+  
+  //printf("%d", fd); -- Obsolete code
+  //printf("\n"); -- Obsolete code
+  
+  printf("\n--- Contents of '%s' ---\n", filename); // Prints a header for the file contents.
+  
+  //printf(filename); -- Obsolete code
+  //printf(" ---\n"); -- Obsolete code
 
-    // TODO: Read the file contents using the read() system call in a loop.
-    // TODO: Use sizeof(buffer) - 1 for the buffer size.
-    // TODO: Null-terminate the buffer after each read.
-    // TODO: Print the contents of the buffer.
-    // TODO: Continue reading until read() returns 0.
+  while ((bytes_read = read(fd, buffer, sizeof(buffer) - 1)) > 0) // Reads the file contents using read() in a loop, until it returns 0.
+  {
+    buffer[bytes_read] = '\0'; //I think this is a null-terminate?
+    printf("%s", buffer); // Prints the contents of the buffer.
+  }
 
-    // TODO: Check if read() failed (bytes_read == -1). If so, print an error using perror, close the file, and return -1.
+  if (bytes_read == -1) // If read() fails, prints an error and returns -1
+  {
+    perror("Error at read");
+    close(fd);
+    return -1;
+  }
 
-    // TODO: Print a footer for the end of the file.
+  printf("\n--- End of file ---\n"); // Prints a footer for the end of the file.
 
-    // TODO: Close the file using close(fd).
-    // TODO: Check if close() failed. If so, print an error using perror and return -1.
+  int close_success = close(fd);
+  if (close_success != 0) // If close() fails, prints an error and returns -1
+  {
+    perror("Error at close");
+    return -1;
+  }
 
-    // TODO: Print a message that the file was closed successfully.
-    return 0;
+  printf("File closed successfully \n"); // Prints if the file closes successfully.
+  return 0;
 }
